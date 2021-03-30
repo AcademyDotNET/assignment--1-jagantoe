@@ -1,0 +1,9 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+	ViewBag.Image = $"/images/bikes/bike{new Random().Next(1, 5)}.jpg";
+}
+
+<div class="text-center">
+	<h1 class="display-4">Welcome to the bike shop</h1>
+	<a class="nav-link text-dark" asp-controller="Products" asp-action="Index"><img src="@ViewBag.Image" /></a>
+</div>
