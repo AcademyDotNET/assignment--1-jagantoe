@@ -1,0 +1,37 @@
+﻿@model ProductModel;
+
+@{
+	ViewData["Title"] = "Update Product";
+}
+
+<h1>Update : @Model.Name</h1>
+<form method="post" enctype="multipart/form-data" asp-controller="Products" asp-action="Update">
+
+	<input type="hidden" asp-for="@Model.Id" id="id" />
+
+	<div class="form-group col-12">
+		<div class="form-row">
+			<label class="col-sm-4">Name</label>
+			<input asp-for="@Model.Name" type="text" id="name" class="col-sm-8" />
+		</div>
+		<div class="form-row">
+			<div class="col-sm-4"></div>
+			<span asp-validation-for="@Model.Name" class="text-danger mt-2"></span>
+		</div>
+	</div>
+
+	<div class="form-group col-12">
+		<div class="form-row">
+			<label class="col-sm-4">Price</label>
+			<input asp-for="@Model.Price" type="number" id="price" class="col-sm-8" />
+		</div>
+		<div class="form-row">
+			<div class="col-sm-4"></div>
+			<span asp-validation-for="@Model.Price" class="text-danger mt-2"></span>
+		</div>
+	</div>
+
+	<div class="text-center">
+		<input type="submit" value="Add" />
+	</div>
+</form>

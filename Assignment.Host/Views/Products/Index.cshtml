@@ -1,0 +1,42 @@
+﻿@model ProductIndexModel;
+
+@{
+	ViewData["Title"] = "Products";
+}
+
+<div class="container w-100">
+	<div class="row border p-2">
+		<div class="col-6">
+			@if (ViewBag.Id > 0)
+			{
+				<a asp-controller="Products" asp-action="Index" asp-route-id="@(ViewBag.Id - 1)">Previous</a>
+			}
+		</div>
+		<div class="col-6 text-right">
+			<a asp-controller="Products" asp-action="Index" asp-route-id="@(ViewBag.Id + 1)">Next</a>
+		</div>
+	</div>
+	<div class="row">
+		@foreach (var product in Model.Products)
+		{
+			<div class="col-4 card">
+				<img src="~/images/bikes/bike1.jpg" class="card-img-top" />
+				<div class="card-body">
+					<a asp-controller="Shop" asp-action="AddToCart" asp-route-id="@product.Id">
+						<div class="text-center bg-success btn btn-block">
+							[Add To Cart]
+						</div>
+					</a>
+					<div class="text-center m-0">
+						<p class="m-0">@product.Name</p>
+						<h2>$@product.Price</h2>
+					</div>
+					<div class="d-flex justify-content-between">
+						<a class="text-primary" asp-controller="Products" asp-action="Update" asp-route-id="@product.Id">Update</a>
+						<a class="text-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id">Delete</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

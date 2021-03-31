@@ -1,0 +1,28 @@
+﻿@model BuyProductModel;
+
+@{
+	ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name: $@Model.Price</h1>
+<form method="post" enctype="multipart/form-data" asp-controller="Shop" asp-action="AddToCart">
+
+	<input type="hidden" asp-for="@Model.Id" />
+	<input type="hidden" asp-for="@Model.Name" />
+	<input type="hidden" asp-for="@Model.Price" />
+
+	<div class="form-group col-12">
+		<div class="form-row">
+			<label class="col-sm-4">Quantity</label>
+			<input asp-for="@Model.Quantity" type="number" id="quantity" class="col-sm-8" />
+		</div>
+		<div class="form-row">
+			<div class="col-sm-4"></div>
+			<span asp-validation-for="@Model.Quantity" class="text-danger mt-2"></span>
+		</div>
+	</div>
+
+	<div class="text-center">
+		<input type="submit" value="Add to Cart" />
+	</div>
+</form>

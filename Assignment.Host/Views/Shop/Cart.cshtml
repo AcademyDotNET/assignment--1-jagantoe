@@ -1,0 +1,45 @@
+﻿@model CartModel;
+
+@{
+	ViewData["Title"] = "Cart";
+}
+<div class="container">
+	<div class="row font-weight-bold">
+		<div class="col">
+			Name
+		</div>
+		<div class="col">
+			Quantity
+		</div>
+		<div class="col">
+			Price
+		</div>
+	</div>
+
+	@foreach (var item in Model.Items)
+	{
+		<div class="row">
+			<div class="col">
+				@item.Name
+			</div>
+			<div class="col">
+				@item.Quantity
+			</div>
+			<div class="col">
+				$@(item.Quantity * item.Price)
+			</div>
+		</div>
+	}
+
+	<div class="row font-weight-bold">
+		<div class="col">
+			Total
+		</div>
+		<div class="col">
+			@Model.Items.Sum(_ => _.Quantity)
+		</div>
+		<div class="col">
+			$@(@Model.Items.Sum(_ => _.Quantity * _.Price))
+		</div>
+	</div>
+</div>
