@@ -1,14 +1,15 @@
 ﻿using Assignment.DataAccess.Repositories.Interfaces;
 using Assignment.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Assignment.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MVC_Assignment.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IRepository<Product> _productRepository;

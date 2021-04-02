@@ -9,5 +9,20 @@ namespace Assignment.Domain
         public DateTime Date { get; set; }
         public Customer Customer { get; set; }
         public ICollection<ShoppingItem> ShoppingItems { get; set; }
+
+        public ShoppingBag()
+        {
+            ShoppingItems = new List<ShoppingItem>();
+        }
+
+        public ShoppingBag(DateTime date): this()
+        {
+            SetDate(date);
+        }
+
+        public void SetDate(DateTime date)
+        {
+            Date = date;
+        }
     }
 }

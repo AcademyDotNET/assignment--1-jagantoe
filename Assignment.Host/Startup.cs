@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MVC_Assignment.Helpers;
 using MVC_Assignment.Models;
 
 namespace MVC_Assignment
@@ -25,6 +26,14 @@ namespace MVC_Assignment
         {
             services.AddDbContext<AssignmentContext>(options => options.UseSqlServer(Configuration.GetConnectionString("db")));
             services.AddRepositories();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            services.AddAuthentication("cookieauthentication").AddCookie("cookieauthentication", settings =>
+            {
+                settings.Cookie.Name = "AuthCookie";
+                settings.LoginPath = "/User/Login";
+            });
+
             services.AddControllersWithViews()
                 .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<BuyProductValidator>());
         }
@@ -44,6 +53,10 @@ namespace MVC_Assignment
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseRouting();
 

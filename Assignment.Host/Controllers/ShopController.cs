@@ -1,34 +1,40 @@
 ﻿using Assignment.DataAccess.Repositories.Interfaces;
 using Assignment.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MVC_Assignment.Helpers;
 using MVC_Assignment.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MVC_Assignment.Controllers
 {
+    [Authorize]
     public class ShopController : Controller
     {
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ShoppingBag> _shoppingBagRepository;
         private readonly IRepository<ShoppingItem> _shoppingItemRepository;
+        private readonly IRepository<Customer> _customerRepository;
 
         public ShopController(IRepository<Product> productRepository, 
             IRepository<ShoppingBag> shoppingBagRepository, 
-            IRepository<ShoppingItem> shoppingItemRepository)
+            IRepository<ShoppingItem> shoppingItemRepository, 
+            IRepository<Customer> customerRepository)
         {
             _productRepository = productRepository;
             _shoppingBagRepository = shoppingBagRepository;
             _shoppingItemRepository = shoppingItemRepository;
+            _customerRepository = customerRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> Cart()
         {
-            var shoppingBag = await _shoppingBagRepository.Single(_ => _.Id == 1,
+            var user = User.GetUser();
+
+            var shoppingBag = await _shoppingBagRepository.Single(_ => _.Customer.Email == user,
                 (IQueryable<ShoppingBag> subjects) => subjects.Include(_ => _.ShoppingItems).ThenInclude(_ => _.Product));
 
             if (shoppingBag == null) return RedirectToAction("Index", "Products");
@@ -56,7 +62,7 @@ namespace MVC_Assignment.Controllers
                 Id = product.Id,
                 Name = product.Name,
                 Price = product.Price,
-                Quantity = 0
+                Quantity = 1
             };
             return View(model);
         }
@@ -66,7 +72,11 @@ namespace MVC_Assignment.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var shoppingItem = new ShoppingItem { Quantity = model.Quantity, ProductId = model.Id, ShoppingBagId = 1 };
+            var user = User.GetUser();
+
+            var customer = await _customerRepository.Single(_ => _.Email == user);
+
+            var shoppingItem = new ShoppingItem(model.Quantity, model.Id, customer.ShoppingBagId);
 
             await _shoppingItemRepository.Create(shoppingItem);
 
