@@ -2,14 +2,14 @@
 {
     public class Customer
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
-        public int ShoppingBagId { get; set; }
-        public ShoppingBag ShoppingBag { get; set; }
+        public int Id { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string Email { get; private set; }
+        public string PasswordHash { get; private set; }
+        public string PasswordSalt { get; private set; }
+        public int ShoppingBagId { get; private set; }
+        public ShoppingBag ShoppingBag { get; private set; }
 
         public Customer()
         {

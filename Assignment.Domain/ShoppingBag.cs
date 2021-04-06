@@ -5,10 +5,10 @@ namespace Assignment.Domain
 {
     public class ShoppingBag
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public Customer Customer { get; set; }
-        public ICollection<ShoppingItem> ShoppingItems { get; set; }
+        public int Id { get; private set; }
+        public DateTime Date { get; private set; }
+        public Customer Customer { get; private set; }
+        public ICollection<ShoppingItem> ShoppingItems { get; private set; }
 
         public ShoppingBag()
         {

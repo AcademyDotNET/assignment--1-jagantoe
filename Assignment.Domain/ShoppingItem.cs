@@ -2,12 +2,12 @@
 {
     public class ShoppingItem
     {
-        public int Id { get; set; }
-        public int Quantity { get; set; }
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-        public int ShoppingBagId { get; set; }
-        public ShoppingBag ShoppingBag { get; set; }
+        public int Id { get; private set; }
+        public int Quantity { get; private set; }
+        public int ProductId { get; private set; }
+        public Product Product { get; private set; }
+        public int ShoppingBagId { get; private set; }
+        public ShoppingBag ShoppingBag { get; private set; }
 
         public ShoppingItem()
         {

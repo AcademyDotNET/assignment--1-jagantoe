@@ -37,7 +37,7 @@ namespace MVC_Assignment.Helpers
             byte[] hashedPassword = KeyDerivation.Pbkdf2(
                 password: password,
                 salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
+                prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8);
             return new HashedPassword() { Password = Convert.ToBase64String(hashedPassword), Salt = Convert.ToBase64String(salt) };
