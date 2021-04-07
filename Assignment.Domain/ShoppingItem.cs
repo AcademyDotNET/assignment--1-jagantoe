@@ -14,10 +14,10 @@
 
         }
 
-        public ShoppingItem(int quantity, int productId, int shoppingBagId)
+        public ShoppingItem(int productId, int quantity, int shoppingBagId)
         {
-            SetQuantity(quantity);
             SetProductId(productId);
+            SetQuantity(quantity);
             SetShoppingBagId(shoppingBagId);
         }
 

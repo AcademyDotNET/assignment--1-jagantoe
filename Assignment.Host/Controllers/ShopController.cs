@@ -1,8 +1,6 @@
-﻿using Assignment.DataAccess.Repositories.Interfaces;
-using Assignment.Domain;
+﻿using Assignment.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MVC_Assignment.Helpers;
 using MVC_Assignment.Models;
 using System.Linq;
@@ -13,20 +11,11 @@ namespace MVC_Assignment.Controllers
     [Authorize]
     public class ShopController : Controller
     {
-        private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<ShoppingBag> _shoppingBagRepository;
-        private readonly IRepository<ShoppingItem> _shoppingItemRepository;
-        private readonly IRepository<Customer> _customerRepository;
+        private readonly IShopService _shopService;
 
-        public ShopController(IRepository<Product> productRepository, 
-            IRepository<ShoppingBag> shoppingBagRepository, 
-            IRepository<ShoppingItem> shoppingItemRepository, 
-            IRepository<Customer> customerRepository)
+        public ShopController(IShopService shopService)
         {
-            _productRepository = productRepository;
-            _shoppingBagRepository = shoppingBagRepository;
-            _shoppingItemRepository = shoppingItemRepository;
-            _customerRepository = customerRepository;
+            _shopService = shopService;
         }
 
         [HttpGet]
@@ -34,8 +23,7 @@ namespace MVC_Assignment.Controllers
         {
             var user = User.GetUser();
 
-            var shoppingBag = await _shoppingBagRepository.Single(_ => _.Customer.Email == user,
-                (IQueryable<ShoppingBag> subjects) => subjects.Include(_ => _.ShoppingItems).ThenInclude(_ => _.Product));
+            var shoppingBag = await _shopService.GetCart(user);
 
             if (shoppingBag == null) return RedirectToAction("Index", "Products");
 
@@ -49,14 +37,17 @@ namespace MVC_Assignment.Controllers
                     Quantity = _.Quantity
                 }).ToList()
             };
+
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> AddToCart(int id)
         {
-            var product = await _productRepository.Single(_ => _.Id == id);
+            var product = await _shopService.GetProduct(id);
+
             if (product == null) return RedirectToAction("Index","Products");
+
             var model = new BuyProductModel
             {
                 Id = product.Id,
@@ -64,6 +55,7 @@ namespace MVC_Assignment.Controllers
                 Price = product.Price,
                 Quantity = 1
             };
+
             return View(model);
         }
 
@@ -74,11 +66,7 @@ namespace MVC_Assignment.Controllers
 
             var user = User.GetUser();
 
-            var customer = await _customerRepository.Single(_ => _.Email == user);
-
-            var shoppingItem = new ShoppingItem(model.Quantity, model.Id, customer.ShoppingBagId);
-
-            await _shoppingItemRepository.Create(shoppingItem);
+            await _shopService.AddToCart(user, model.Id, model.Quantity);
 
             return RedirectToAction("Index","Products");
         }

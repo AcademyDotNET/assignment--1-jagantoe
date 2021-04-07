@@ -1,5 +1,6 @@
 using Assignment.DataAccess;
 using Assignment.DataAccess.DependencyInjection;
+using Assignment.Logic.DependencyInjection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MVC_Assignment.Helpers;
 using MVC_Assignment.Models;
 
 namespace MVC_Assignment
@@ -25,8 +25,9 @@ namespace MVC_Assignment
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AssignmentContext>(options => options.UseSqlServer(Configuration.GetConnectionString("db")));
+            
             services.AddRepositories();
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddServices();
 
             services.AddAuthentication("cookieauthentication").AddCookie("cookieauthentication", settings =>
             {

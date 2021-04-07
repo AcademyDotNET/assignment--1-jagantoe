@@ -1,9 +1,7 @@
-﻿using Assignment.DataAccess.Repositories.Interfaces;
-using Assignment.Domain;
+﻿using Assignment.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Assignment.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,22 +10,20 @@ namespace MVC_Assignment.Controllers
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly IRepository<Product> _productRepository;
+        private readonly IProductService _productService;
 
-        public ProductsController(IRepository<Product> productRepository)
+        public ProductsController(IProductService productService)
         {
-            _productRepository = productRepository;
+            _productService = productService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
-            var products = await _productRepository.All();
-            var max = (int)Math.Ceiling(products.Count() / 9.0);
-            id = id < 0 ? 0 : id > max ? max : id;
+            var products = await _productService.GetProductsList(id);
             var model = new ProductIndexModel
             {
-                Products = products.Skip((id - 1) * 9).Take(9).Select(_ => new ProductModel { 
+                Products = products.Select(_ => new ProductModel { 
                     Id = _.Id,
                     Name = _.Name, 
                     Price = _.Price
@@ -49,9 +45,7 @@ namespace MVC_Assignment.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var product = new Product() { Name = model.Name, Price = model.Price };
-
-            await _productRepository.Create(product);
+            await _productService.CreateProduct(model.Name, model.Price);
 
             return RedirectToAction("Index");
         }
@@ -59,7 +53,7 @@ namespace MVC_Assignment.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            var product = await _productRepository.Single(_ => _.Id == id);
+            var product = await _productService.GetProduct(id);
             if (product == null) return RedirectToAction("Index");
             var model = new ProductModel
             {
@@ -75,24 +69,16 @@ namespace MVC_Assignment.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var product = new Product() { Id = model.Id, Name = model.Name, Price = model.Price };
-            
-            await _productRepository.Update(product);
+            await _productService.UpdateProduct(model.Id, model.Name, model.Price);
 
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _productRepository.Single(_ => _.Id == id);
-
-            if (product != null)
-            {
-                await _productRepository.Delete(product);
-            }
+            await _productService.DeleteProduct(id);
 
             return RedirectToAction("Index");
         }
-
     }
 }

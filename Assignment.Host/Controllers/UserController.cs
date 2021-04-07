@@ -1,28 +1,17 @@
-﻿using Assignment.DataAccess.Repositories.Interfaces;
-using Assignment.Domain;
+﻿using Assignment.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using MVC_Assignment.Helpers;
 using MVC_Assignment.Models;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MVC_Assignment.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IRepository<Customer> _customerRepository;
-        private readonly IRepository<ShoppingBag> _shoppingBagRepository;
-        private readonly IPasswordHasher _passwordHasher;
-        public UserController(IRepository<Customer> customerRepository, 
-            IRepository<ShoppingBag> shoppingbagRespository,
-            IPasswordHasher passwordHasher)
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _customerRepository = customerRepository;
-            _shoppingBagRepository = shoppingbagRespository;
-            _passwordHasher = passwordHasher;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -36,28 +25,15 @@ namespace MVC_Assignment.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var customer = await _customerRepository.Single(_ => _.Email == model.Email);
-            if (customer == null)
+            var login = await _userService.Login(model.Email, model.Password);
+
+            if (login == null)
             {
-                ViewBag.Message = "No user found for that email";
-                return View();
-            }
-            var valid = _passwordHasher.CheckPassword(model.Password, customer.PasswordHash, customer.PasswordSalt);
-            if (!valid)
-            {
-                ViewBag.Message = "Invalid password";
+                ViewBag.Message = "Invalid email/password";
                 return View();
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim("user", customer.Email)
-            };
-
-            var identity = new ClaimsIdentity(claims, "claims");
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(principal);
+            await HttpContext.SignInAsync(login);
 
             return RedirectToAction("Index", "Products");
         }
@@ -73,11 +49,13 @@ namespace MVC_Assignment.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var shoppingBag = new ShoppingBag(DateTime.UtcNow);
-            await _shoppingBagRepository.Create(shoppingBag);
-            var passwordHash = _passwordHasher.GenerateHashedPassword(model.Password);
-            var customer = new Customer(model.FirstName, model.LastName, model.Email, passwordHash.Password, passwordHash.Salt, shoppingBag.Id);
-            await _customerRepository.Create(customer);
+            var response = await _userService.Register(model.FirstName, model.LastName, model.Email, model.Password);
+
+            if (!response)
+            {
+                ViewBag.Message = "Customer already exists.";
+                return View();
+            }
 
             return RedirectToAction("Login");
         }

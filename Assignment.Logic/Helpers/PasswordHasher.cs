@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
-namespace MVC_Assignment.Helpers
+namespace MVC_Assignment.Logic.Helpers
 {
     public class HashedPassword
     {
@@ -19,6 +16,7 @@ namespace MVC_Assignment.Helpers
         public HashedPassword GenerateHashedPassword(string password);
         public bool CheckPassword(string password, string userPassword, string userSalt);
     }
+
     public class PasswordHasher : IPasswordHasher
     {
         public byte[] GenerateSalt()
@@ -48,7 +46,7 @@ namespace MVC_Assignment.Helpers
             string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: Convert.FromBase64String(userSalt),
-                prf: KeyDerivationPrf.HMACSHA1,
+                prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
             return passwordHash == userHashedPassword;
