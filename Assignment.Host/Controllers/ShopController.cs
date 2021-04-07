@@ -27,6 +27,8 @@ namespace MVC_Assignment.Controllers
 
             if (shoppingBag == null) return RedirectToAction("Index", "Products");
 
+            var discount = _shopService.CalculateDiscount(shoppingBag);
+
             var model = new CartModel
             {
                 Items = shoppingBag.ShoppingItems.Select(_ => new CartItemModel
@@ -35,7 +37,8 @@ namespace MVC_Assignment.Controllers
                     Name = _.Product.Name,
                     Price = _.Product.Price,
                     Quantity = _.Quantity
-                }).ToList()
+                }).ToList(),
+                Discount = discount
             };
 
             return View(model);

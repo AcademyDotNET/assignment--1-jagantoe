@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace MVC_Assignment.Logic.Helpers
+namespace Assignment.Logic.Helpers
 {
     public class HashedPassword
     {

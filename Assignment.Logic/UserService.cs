@@ -1,6 +1,6 @@
 ﻿using Assignment.DataAccess.Repositories.Interfaces;
 using Assignment.Domain;
-using MVC_Assignment.Logic.Helpers;
+using Assignment.Logic.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;

@@ -39,7 +39,11 @@
 			@Model.Items.Sum(_ => _.Quantity)
 		</div>
 		<div class="col">
-			$@(@Model.Items.Sum(_ => _.Quantity * _.Price))
+			@if (Model.Discount != 0)
+			{
+				<span class="d-block text-success">Discount: $-@Model.Discount</span>
+			}
+			Total: $@(@Model.Items.Sum(_ => _.Quantity * _.Price) - Model.Discount) 
 		</div>
 	</div>
 </div>

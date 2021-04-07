@@ -45,7 +45,7 @@ namespace Assignment.Logic
 
         public async Task CreateProduct(string productName, int productPrice)
         {
-            var product = new Product(productName, productPrice);
+            var product = new Product(productName, productPrice, "");
 
             await _productRepository.Create(product);
         }

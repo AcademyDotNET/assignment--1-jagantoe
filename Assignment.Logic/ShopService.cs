@@ -1,5 +1,6 @@
 ﻿using Assignment.DataAccess.Repositories.Interfaces;
 using Assignment.Domain;
+using Assignment.Logic.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Assignment.Logic
         Task<ShoppingBag> GetCart(string userEmail);
         Task<Product> GetProduct(int productId);
         Task AddToCart(string userEmail, int productId, int amount);
+        int CalculateDiscount(ShoppingBag shoppingBag);
     }
 
     public class ShopService : IShopService
@@ -19,13 +21,20 @@ namespace Assignment.Logic
         private readonly IRepository<ShoppingBag> _shoppingBagRepository;
         private readonly IRepository<ShoppingItem> _shoppingItemRepository;
         private readonly IRepository<Customer> _customerRepository;
+        private readonly IDiscountCalculator _discountCalculator;
 
-        public ShopService(IRepository<Product> productRepository, IRepository<ShoppingBag> shoppingBagRepository, IRepository<ShoppingItem> shoppingItemRepository, IRepository<Customer> customerRepository)
+        public ShopService(
+            IRepository<Product> productRepository, 
+            IRepository<ShoppingBag> shoppingBagRepository, 
+            IRepository<ShoppingItem> shoppingItemRepository, 
+            IRepository<Customer> customerRepository, 
+            IDiscountCalculator discountCalculator)
         {
             _productRepository = productRepository;
             _shoppingBagRepository = shoppingBagRepository;
             _shoppingItemRepository = shoppingItemRepository;
             _customerRepository = customerRepository;
+            _discountCalculator = discountCalculator;
         }
 
         public async Task<ShoppingBag> GetCart(string userEmail)
@@ -46,6 +55,11 @@ namespace Assignment.Logic
             var shoppingItem = new ShoppingItem(productId, amount, customer.ShoppingBagId);
 
             await _shoppingItemRepository.Create(shoppingItem);
+        }
+
+        public int CalculateDiscount(ShoppingBag shoppingBag)
+        {
+            return _discountCalculator.Calculate(shoppingBag.ShoppingItems);
         }
     }
 }
