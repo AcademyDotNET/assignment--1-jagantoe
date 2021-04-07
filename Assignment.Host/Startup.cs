@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MVC_Assignment.Mail;
 using MVC_Assignment.Models;
 
 namespace MVC_Assignment
@@ -25,7 +26,10 @@ namespace MVC_Assignment
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AssignmentContext>(options => options.UseSqlServer(Configuration.GetConnectionString("db")));
-            
+
+            services.AddSingleton(Configuration.GetSection("Smtp").Get<SmtpSettings>());
+            services.AddSingleton<IMailer, Mailer>();
+
             services.AddRepositories();
             services.AddServices();
 

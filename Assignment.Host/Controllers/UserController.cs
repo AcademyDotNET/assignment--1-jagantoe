@@ -1,6 +1,8 @@
 ﻿using Assignment.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit;
+using MVC_Assignment.Mail;
 using MVC_Assignment.Models;
 using System.Threading.Tasks;
 
@@ -9,9 +11,14 @@ namespace MVC_Assignment.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IMailer _mailer;
+        private readonly SmtpSettings _smtpSettings;
+
+        public UserController(IUserService userService, IMailer mailer, SmtpSettings smtpSettings)
         {
             _userService = userService;
+            _mailer = mailer;
+            _smtpSettings = smtpSettings;
         }
 
         [HttpGet]
@@ -57,7 +64,27 @@ namespace MVC_Assignment.Controllers
                 return View();
             }
 
+            await SendWelcomeMail(model.FirstName, model.Email);
+
             return RedirectToAction("Login");
+        }
+
+        private async Task SendWelcomeMail(string firstName, string email)
+        {
+            var mailToUser = new MimeMessage();
+            mailToUser.To.Add(MailboxAddress.Parse(email));
+            mailToUser.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Sender));
+            mailToUser.Subject =  $"Bike Shop Registration";
+
+            var bodyBuilder = new BodyBuilder()
+            {
+                HtmlBody = $"<html><body>" +
+                           $"<h1>Welcome {firstName}</h1> " +
+                           $"<p>Your account has been created and you can now access the shop.</p>" +
+                           $"</body></html>"
+            };
+            mailToUser.Body = bodyBuilder.ToMessageBody();
+            await _mailer.SendMailAsync(mailToUser);
         }
     }
 }
