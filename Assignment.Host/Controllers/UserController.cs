@@ -1,8 +1,9 @@
-﻿using Assignment.Logic;
+﻿using Assignment.Common.Logger;
+using Assignment.Common.Mail;
+using Assignment.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
-using MVC_Assignment.Mail;
 using MVC_Assignment.Models;
 using System.Threading.Tasks;
 
@@ -13,12 +14,14 @@ namespace MVC_Assignment.Controllers
         private readonly IUserService _userService;
         private readonly IMailer _mailer;
         private readonly SmtpSettings _smtpSettings;
+        private readonly ICustomLogger _logger;
 
-        public UserController(IUserService userService, IMailer mailer, SmtpSettings smtpSettings)
+        public UserController(IUserService userService, IMailer mailer, SmtpSettings smtpSettings, ICustomLogger logger)
         {
             _userService = userService;
             _mailer = mailer;
             _smtpSettings = smtpSettings;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -65,6 +68,7 @@ namespace MVC_Assignment.Controllers
             }
 
             await SendWelcomeMail(model.FirstName, model.Email);
+            _logger.Log($"Registered new user: {model.FirstName} {model.LastName} {model.Email}");
 
             return RedirectToAction("Login");
         }

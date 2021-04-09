@@ -1,4 +1,4 @@
-﻿namespace MVC_Assignment.Mail
+﻿namespace Assignment.Common.Mail
 {
     public class SmtpSettings
     {

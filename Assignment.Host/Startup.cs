@@ -1,5 +1,6 @@
+using Assignment.Common;
+using Assignment.Common.Mail;
 using Assignment.DataAccess;
-using Assignment.DataAccess.DependencyInjection;
 using Assignment.Logic.DependencyInjection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MVC_Assignment.Mail;
 using MVC_Assignment.Models;
 
 namespace MVC_Assignment
@@ -27,11 +27,8 @@ namespace MVC_Assignment
         {
             services.AddDbContext<AssignmentContext>(options => options.UseSqlServer(Configuration.GetConnectionString("db")));
 
-            services.AddSingleton(Configuration.GetSection("Smtp").Get<SmtpSettings>());
-            services.AddSingleton<IMailer, Mailer>();
-
-            services.AddRepositories();
             services.AddServices();
+            services.AddCommon(Configuration.GetSection("Smtp").Get<SmtpSettings>());
 
             services.AddAuthentication("cookieauthentication").AddCookie("cookieauthentication", settings =>
             {

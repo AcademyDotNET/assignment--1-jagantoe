@@ -2,13 +2,8 @@
 using MimeKit;
 using System.Threading.Tasks;
 
-namespace MVC_Assignment.Mail
+namespace Assignment.Common.Mail
 {
-    public interface IMailer
-    {
-        Task SendMailAsync(MimeMessage mail);
-    }
-
     public class Mailer : IMailer
     {
         private readonly SmtpSettings _smtpSettings;

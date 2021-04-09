@@ -1,9 +1,10 @@
-﻿using Assignment.Logic;
+﻿using Assignment.Common.Logger;
+using Assignment.Common.Mail;
+using Assignment.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MVC_Assignment.Helpers;
-using MVC_Assignment.Mail;
 using MVC_Assignment.Models;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,12 +17,14 @@ namespace MVC_Assignment.Controllers
         private readonly IShopService _shopService;
         private readonly IMailer _mailer;
         private readonly SmtpSettings _smtpSettings;
+        private readonly ICustomLogger _logger;
 
-        public ShopController(IShopService shopService, IMailer mailer, SmtpSettings smtpSettings)
+        public ShopController(IShopService shopService, IMailer mailer, SmtpSettings smtpSettings, ICustomLogger logger)
         {
             _shopService = shopService;
             _mailer = mailer;
             _smtpSettings = smtpSettings;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -74,6 +77,7 @@ namespace MVC_Assignment.Controllers
             };
 
             await SendOrderEmail(user, model);
+            _logger.Log($"{user} has placed an order for the following items:", model.Items);
             return View();
         }
 
