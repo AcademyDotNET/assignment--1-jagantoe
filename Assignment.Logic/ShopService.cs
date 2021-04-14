@@ -39,8 +39,7 @@ namespace Assignment.Logic
 
         public async Task<ShoppingBag> GetCart(string userEmail)
         {
-            return await _shoppingBagRepository.Single(_ => _.Customer.Email == userEmail,
-                (IQueryable<ShoppingBag> subjects) => subjects.Include(_ => _.ShoppingItems).ThenInclude(_ => _.Product));
+            return await _shoppingBagRepository.Single(_ => _.Customer.Email == userEmail, subjects => subjects.Include(_ => _.ShoppingItems).ThenInclude(_ => _.Product));
         }
 
         public Task<Product> GetProduct(int productId)

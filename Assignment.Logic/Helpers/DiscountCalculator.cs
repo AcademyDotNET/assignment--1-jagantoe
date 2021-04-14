@@ -24,7 +24,7 @@ namespace Assignment.Logic.Helpers
 
             var discount = Math.Floor(amount / discountCount) * discountPercentage;
 
-            discount = discount > maxDiscount ? 0.5 : discount;
+            discount = Math.Min(discount, maxDiscount);
 
             return Convert.ToInt32(total * discount);
         }

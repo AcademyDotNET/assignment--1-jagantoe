@@ -36,6 +36,7 @@ namespace Assignment.Logic
 
             var max = (int)Math.Ceiling(products.Count() / 9.0);
 
+            //Refactor
             page = page < 0 ? 0 : page > max ? max : page;
 
             products = products.Skip((page - 1) * 9).Take(9).ToList();

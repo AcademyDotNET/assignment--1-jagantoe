@@ -12,7 +12,7 @@ namespace MVC_Assignment
         {
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(new RenderedCompactJsonFormatter()).WriteTo.Debug(outputTemplate: $"{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}").WriteTo.File("Logs/Default/log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(new RenderedCompactJsonFormatter()).WriteTo.Debug(outputTemplate: $"{DateTime.Now.ToString("yyyy - MM - dd")}").WriteTo.File("Logs/Default/log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             CreateHostBuilder(args).Build().Run();
         }

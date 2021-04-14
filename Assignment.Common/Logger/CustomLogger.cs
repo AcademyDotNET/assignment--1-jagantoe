@@ -6,12 +6,12 @@ namespace Assignment.Common.Logger
 {
     public class CustomLogger: ICustomLogger
     {
-        public ILogger Logger { get; set; }
+        private ILogger Logger { get; set; }
         public CustomLogger()
         {
             Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(new JsonFormatter()).WriteTo.Debug(outputTemplate: $"{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}").WriteTo.File("Logs/Custom/log.txt", rollingInterval: RollingInterval.Month)
+                .WriteTo.Console(new JsonFormatter()).WriteTo.Debug(outputTemplate: $"{DateTime.Now.ToString("yyyy - MM - dd")}").WriteTo.File("Logs/Custom/log.txt", rollingInterval: RollingInterval.Month)
                 .CreateLogger();
         }
 
